@@ -13,7 +13,7 @@ import {
 export function Header() {
   return (
     <header className="w-full bg-[color:var(--persian-blue)] text-white">
-      <div className="mx-auto flex items-center justify-between px-4 py-4 md:py-5">
+      <div className="relative mx-auto flex items-center justify-between px-4 py-4 md:py-5">
         <Sheet>
           <SheetTrigger
             aria-label="Open menu"
