@@ -109,7 +109,7 @@ function Home() {
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {CLASS_KEYS.map((k) => (
-              <ClassTile key={k} classKey={k} onOpen={() => navigate({ to: "/chapter", search: { classKey: k, subject: "", chapter: "", auto: "" } })} />
+              <ClassTile key={k} classKey={k} />
             ))}
           </div>
         </section>
@@ -122,7 +122,7 @@ function Home() {
   );
 }
 
-function ClassTile({ classKey }: { classKey: string; onOpen: () => void }) {
+function ClassTile({ classKey }: { classKey: string }) {
   const cls = CURRICULUM[classKey];
   return (
     <Link
