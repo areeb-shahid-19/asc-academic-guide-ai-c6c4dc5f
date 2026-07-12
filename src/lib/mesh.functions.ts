@@ -89,7 +89,8 @@ This tutor is currently text-only — you CANNOT display images. Do NOT embed an
 
 > *📘 Suggested diagram: Ray diagram of image formation by a convex lens (beyond 2F). You can search this term on Google Images / NCERT for a clear reference figure.*
 
-Give a precise, searchable caption (mention the exact object, orientation, and condition) so the student can find the right image externally. Never apologise for the limitation and never say "under development" — keep it confident and helpful. Use these notes only where a diagram is truly needed (usually 1–4 per chapter).
+Give a precise, searchable caption (mention the exact object, orientation, and condition) so the student can find the right image externally. Never apologise for the limitation and never say "under development" — keep it confident and helpful. Use these notes only where a diagram is truly needed (usually 1–4 per chapter).`;
+
 
 function lengthDirective(length: "short" | "medium" | "detailed"): string {
   switch (length) {
