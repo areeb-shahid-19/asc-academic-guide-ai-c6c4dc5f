@@ -26,11 +26,7 @@ export function Header() {
           <SheetContent side="left" className="w-[320px] sm:w-[380px]">
             <SheetHeader className="items-center text-center">
               <SheetTitle className="sr-only">Areeb Shahid Academy</SheetTitle>
-              <img
-                src={wordmarkUrl}
-                alt="Areeb Shahid Academy"
-                className="mx-auto h-12 w-auto object-contain"
-              />
+              <Wordmark className="mx-auto h-14 w-auto text-[color:var(--persian-blue)]" />
             </SheetHeader>
 
             <nav className="mt-6 flex flex-col gap-2">
