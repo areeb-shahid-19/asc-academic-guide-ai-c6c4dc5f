@@ -98,13 +98,7 @@ export function Header() {
           aria-label="Areeb Shahid Academy — Home"
           className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
         >
-          <img
-            src={logoUrl}
-            alt="Areeb Shahid Academy logo"
-            width={1024}
-            height={1024}
-            className="h-14 w-auto sm:h-16 md:h-20 object-contain drop-shadow-sm"
-          />
+          <Wordmark className="h-10 w-auto sm:h-12 text-white" />
         </Link>
 
         {/* Right-side spacer to balance the hamburger */}
