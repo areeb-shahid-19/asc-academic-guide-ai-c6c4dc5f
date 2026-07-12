@@ -137,9 +137,13 @@ function FollowUpBox({
         </div>
       )}
       {answer && (
-        <article className="prose prose-slate max-w-none dark:prose-invert prose-headings:text-[color:var(--persian-blue)] prose-strong:text-[color:var(--persian-blue)] prose-img:mx-auto prose-img:rounded-lg prose-img:border prose-img:shadow-sm prose-img:my-6 prose-img:max-h-96 prose-img:object-contain">
-          <Markdown text={answer} />
-        </article>
+        <div className="space-y-4">
+          <article className="prose prose-slate max-w-none dark:prose-invert prose-headings:text-[color:var(--persian-blue)] prose-strong:text-[color:var(--persian-blue)]">
+            <Markdown text={answer} />
+          </article>
+          {/* Recursive follow-up: after this answer, allow another follow-up. */}
+          <FollowUpBox previousAnswer={answer} length={length} />
+        </div>
       )}
     </div>
   );
