@@ -3,10 +3,10 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, MessageCirclePlus } from "lucide-react";
+import { Loader2, MessageCirclePlus, Send } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { LengthButton, type LengthChoice } from "@/components/LengthButton";
+import type { LengthChoice } from "@/components/LengthButton";
 import { followUp } from "@/lib/mesh.functions";
 
 /**
@@ -56,6 +56,11 @@ function Markdown({ text }: { text: string }) {
             ) : null}
           </figure>
         ),
+        table: ({ node: _node, ...props }) => (
+          <div className="my-6 overflow-x-auto">
+            <table {...props} className="w-full border-collapse text-sm" />
+          </div>
+        ),
       }}
     >
       {normalizeMath(text)}
@@ -63,14 +68,20 @@ function Markdown({ text }: { text: string }) {
   );
 }
 
-function FollowUpBox({ previousAnswer }: { previousAnswer: string }) {
+function FollowUpBox({
+  previousAnswer,
+  length,
+}: {
+  previousAnswer: string;
+  length: LengthChoice;
+}) {
   const run = useServerFn(followUp);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function ask(length: LengthChoice) {
+  async function ask() {
     if (question.trim().length < 2) {
       setError("Type your follow-up question first.");
       return;
@@ -94,19 +105,25 @@ function FollowUpBox({ previousAnswer }: { previousAnswer: string }) {
         <MessageCirclePlus className="h-4 w-4" />
         Ask a follow-up about this answer
       </div>
-      <Input
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-        placeholder="e.g. Why is this sign negative in step 3?"
-        className="h-11"
-      />
-      <div>
-        <LengthButton
-          label="Ask follow-up"
-          loading={loading}
-          disabled={!question.trim()}
-          onChoose={ask}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Input
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !loading && question.trim()) ask();
+          }}
+          placeholder="e.g. Why is this sign negative in step 3?"
+          className="h-11"
         />
+        <button
+          type="button"
+          onClick={ask}
+          disabled={loading || !question.trim()}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[color:var(--persian-blue)] px-5 text-sm font-medium text-white shadow-sm transition hover:bg-[color:var(--persian-blue)]/90 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          <span>Ask</span>
+        </button>
       </div>
       {error && (
         <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
@@ -134,12 +151,14 @@ export function AiOutput({
   text,
   emptyHint,
   showFollowUp = true,
+  length = "medium",
 }: {
   loading: boolean;
   error: string | null;
   text: string;
   emptyHint?: string;
   showFollowUp?: boolean;
+  length?: LengthChoice;
 }) {
   if (loading) {
     return (
@@ -168,7 +187,7 @@ export function AiOutput({
       <article className="prose prose-slate max-w-none rounded-lg border bg-card p-6 dark:prose-invert prose-headings:text-[color:var(--persian-blue)] prose-strong:text-[color:var(--persian-blue)] prose-img:mx-auto prose-img:rounded-lg prose-img:border prose-img:shadow-sm prose-img:my-6 prose-img:max-h-96 prose-img:object-contain">
         <Markdown text={text} />
       </article>
-      {showFollowUp && <FollowUpBox previousAnswer={text} />}
+      {showFollowUp && <FollowUpBox previousAnswer={text} length={length} />}
     </div>
   );
 }

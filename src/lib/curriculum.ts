@@ -680,6 +680,114 @@ const CAPP_10: Subject = {
   ],
 };
 
+// Hindi (Kshitij + Sparsh — Course A) for Class 9 & 10
+const HINDI_9: Subject = {
+  name: "हिंदी (Hindi)",
+  chapters: [
+    "दो बैलों की कथा",
+    "ल्हासा की ओर",
+    "उपभोक्तावाद की संस्कृति",
+    "साँवले सपनों की याद",
+    "प्रेमचंद के फटे जूते",
+    "मेरे बचपन के दिन",
+    "एक कुत्ता और एक मैना",
+    "साखियाँ एवं सबद (कबीर)",
+    "वाख (ललद्यद)",
+    "सवैये (रसखान)",
+    "कैदी और कोकिला",
+    "ग्राम श्री",
+    "मेघ आए",
+    "यमराज की दिशा",
+  ],
+};
+
+const HINDI_10: Subject = {
+  name: "हिंदी (Hindi)",
+  chapters: [
+    "पद (सूरदास)",
+    "राम-लक्ष्मण-परशुराम संवाद (तुलसीदास)",
+    "सवैये और कवित्त (देव)",
+    "आत्मकथ्य (जयशंकर प्रसाद)",
+    "उत्साह / अट नहीं रही है (सूर्यकांत त्रिपाठी 'निराला')",
+    "यह दंतुरित मुस्कान / फसल (नागार्जुन)",
+    "छाया मत छूना (गिरिजा कुमार माथुर)",
+    "कन्यादान (ऋतुराज)",
+    "संगतकार (मंगलेश डबराल)",
+    "नेताजी का चश्मा (स्वयं प्रकाश)",
+    "बालगोबिन भगत (रामवृक्ष बेनीपुरी)",
+    "लखनवी अंदाज़ (यशपाल)",
+    "मानवीय करुणा की दिव्य चमक (सर्वेश्वर दयाल सक्सेना)",
+    "एक कहानी यह भी (मन्नू भंडारी)",
+    "स्त्री-शिक्षा के विरोधी कुतर्कों का खंडन (महावीरप्रसाद द्विवेदी)",
+    "नौबतखाने में इबादत (यतीन्द्र मिश्र)",
+    "संस्कृति (भदन्त आनंद कौसल्यायन)",
+  ],
+};
+
+// Urdu (Nawa-e-Urdu / Gulzar-e-Urdu) for Class 9 & 10
+const URDU_9: Subject = {
+  name: "اُردُو (Urdu)",
+  chapters: [
+    "نعت (الطاف حسین حالی)",
+    "ابرِ کرم (علامہ اقبال)",
+    "ماں (منشی پریم چند)",
+    "حج کا سفر (شبلی نعمانی)",
+    "دیوالی (سجاد حیدر یلدرم)",
+    "بہادر (رشید احمد صدیقی)",
+    "خط (سرسید احمد خان)",
+    "غزل (میر تقی میر)",
+    "غزل (مرزا غالب)",
+    "نظم — پنجرے کی چڑیا",
+    "نظم — چاند کا پیغام",
+  ],
+};
+
+const URDU_10: Subject = {
+  name: "اُردُو (Urdu)",
+  chapters: [
+    "حمد (نظیر اکبر آبادی)",
+    "نعت (محسن کاکوروی)",
+    "غزل (میر تقی میر)",
+    "غزل (مرزا غالب)",
+    "غزل (علامہ اقبال)",
+    "نظم — ماں کا خواب (علامہ اقبال)",
+    "نظم — ہمالہ (علامہ اقبال)",
+    "مکتوب (غالب کے خطوط)",
+    "خط (مولانا ابوالکلام آزاد)",
+    "افسانہ — نیا قانون (سعادت حسن منٹو)",
+    "افسانہ — گڈریا (اشفاق احمد)",
+    "مضمون — عید الفطر",
+    "مضمون — بھارت کی ثقافت",
+    "سفر نامہ — دلی کی سیر",
+  ],
+};
+
+// Entrepreneurship (Class 11 & 12 — Commerce)
+const ENTREP_11: Subject = {
+  name: "Entrepreneurship",
+  chapters: [
+    "Entrepreneurship: Concept and Functions",
+    "An Entrepreneur",
+    "Entrepreneurial Journey",
+    "Entrepreneurship as Innovation and Problem Solving",
+    "Understanding the Market",
+    "Business Arithmetic",
+    "Resource Mobilization",
+  ],
+};
+
+const ENTREP_12: Subject = {
+  name: "Entrepreneurship",
+  chapters: [
+    "Entrepreneurial Opportunity",
+    "Entrepreneurial Planning",
+    "Enterprise Marketing",
+    "Enterprise Growth Strategies",
+    "Business Arithmetic",
+    "Resource Mobilization",
+  ],
+};
+
 // ---------- Full curriculum ----------
 
 export const CURRICULUM: Record<string, ClassData> = {
@@ -759,6 +867,8 @@ export const CURRICULUM: Record<string, ClassData> = {
           "If I Were You",
         ],
       },
+      HINDI_9,
+      URDU_9,
       AI_9,
       IT_9,
       CAPP_9,
@@ -845,6 +955,8 @@ export const CURRICULUM: Record<string, ClassData> = {
           "The Proposal",
         ],
       },
+      HINDI_10,
+      URDU_10,
       AI_10,
       IT_10,
       CAPP_10,
@@ -854,7 +966,7 @@ export const CURRICULUM: Record<string, ClassData> = {
     label: "Class 11",
     streams: {
       Science: [PHYSICS_11, CHEM_11, BIO_11, MATH_11, CS_11, ENGLISH_11, PHE_11],
-      Commerce: [ACCOUNTS_11, BST_11, ECO_11, MATH_11, CS_11, ENGLISH_11, PHE_11],
+      Commerce: [ACCOUNTS_11, BST_11, ECO_11, ENTREP_11, MATH_11, CS_11, ENGLISH_11, PHE_11],
       Arts: [
         HISTORY_11,
         POLSCI_11,
@@ -872,7 +984,7 @@ export const CURRICULUM: Record<string, ClassData> = {
     label: "Class 12",
     streams: {
       Science: [PHYSICS_12, CHEM_12, BIO_12, MATH_12, CS_12, ENGLISH_12, PHE_12],
-      Commerce: [ACCOUNTS_12, BST_12, ECO_12, MATH_12, CS_12, ENGLISH_12, PHE_12],
+      Commerce: [ACCOUNTS_12, BST_12, ECO_12, ENTREP_12, MATH_12, CS_12, ENGLISH_12, PHE_12],
       Arts: [
         HISTORY_12,
         POLSCI_12,
