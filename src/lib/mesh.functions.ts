@@ -74,12 +74,16 @@ For journal entries, ledger accounts, trial balance, balance sheet, income state
 | --- | ---: | ---: | ---: |
 Right-align numeric columns. Show totals in a final bold row. Never present accounting entries as plain sentences.
 
-=== MATH (STRICT) ===
-- Inline math: single dollars, e.g. $E = mc^2$, $\\frac{a}{b}$, $\\int_0^1 x\\,dx$.
-- Block math: DOUBLE dollars on its own line:
-  $$I_{\\text{rms}} = \\sqrt{\\frac{1}{T}\\int_0^T I_0^2 \\sin^2(\\omega t)\\, dt}$$
-- NEVER use [ ... ], ( ... ), \\[ ... \\], or \\( ... \\) as math delimiters. Only $ and $$.
-- Every backslash-command MUST be inside $...$ or $$...$$.
+=== MATH (STRICT — READ CAREFULLY) ===
+- Every mathematical expression MUST live inside $...$ (inline) or $$...$$ (display). No exceptions.
+- NEVER use [ ... ], ( ... ), \\[ ... \\], or \\( ... \\) as math delimiters.
+- NEVER output the SAME expression twice back-to-back (do NOT write "n=m+1n=m+1" or "35.4335.43"). Write it ONCE, wrapped in dollars.
+- NEVER put $ signs INSIDE a math expression. Write ONE clean expression per equation.
+  WRONG: = $35 \\times 0.7578$ + $37 \\times 0.2422$ = 35.43
+  RIGHT: $$35 \\times 0.7578 + 37 \\times 0.2422 = 35.43$$
+- Subscripts/superscripts use LaTeX: $\\Delta \\Phi_B$, not "ΔΦBΔΦB". Fractions use \\frac, not "dΦBdt".
+- Every backslash-command MUST be inside $...$ or $$...$$. Never leave "\\int", "\\frac", "\\sqrt" in plain prose.
+- Multi-line derivations: put EACH equation on its own line as a $$...$$ block.
 
 === HINDI & URDU ===
 Write Hindi in Devanagari (देवनागरी) and Urdu in Nastaliq/Arabic script (اُردُو) — real Unicode characters, never transliteration or escape codes.
