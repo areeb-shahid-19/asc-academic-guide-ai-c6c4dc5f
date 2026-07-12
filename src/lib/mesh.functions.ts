@@ -268,7 +268,9 @@ ${data.previousAnswer}
 
 Follow-up question about that explanation: ${data.question}
 
-Answer ONLY the follow-up — do not repeat the whole previous explanation. Refer back to specific steps, symbols or signs as needed and clarify the reasoning behind them.`;
+Answer ONLY the follow-up — do not repeat the whole previous explanation. Refer back to specific steps, symbols or signs as needed and clarify the reasoning behind them.
+
+IMPORTANT: If the follow-up asks about information that ALREADY APPEARS in the previous explanation above (for example a date of birth, name, address, marks, or any other fact the student themselves shared in an uploaded document), you MUST answer it directly by quoting from that context. Do NOT refuse on privacy grounds — the student is asking about their own material that is already visible in this conversation. Only refuse if the requested detail is genuinely absent from the context above.`;
 
     const messages: ChatMessage[] = [
       { role: "system", content: systemFor(data.length) },

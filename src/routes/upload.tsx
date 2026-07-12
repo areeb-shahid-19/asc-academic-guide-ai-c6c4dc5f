@@ -58,11 +58,17 @@ async function extractTextFromFile(file: File): Promise<string> {
     );
   }
 
-  // PDFs — not supported in the browser here.
+  // PDF — parse with unpdf (works in the browser, no worker files needed).
   if (magic === "pdf" || name.endsWith(".pdf")) {
-    throw new Error(
-      "PDF parsing isn't supported in the browser yet. Please copy the text from the PDF and paste it below, or export the PDF to .docx and re-upload.",
-    );
+    const { extractText } = await import("unpdf");
+    const { text } = await extractText(new Uint8Array(buf), { mergePages: true });
+    const clean = sanitizeText(Array.isArray(text) ? text.join("\n\n") : text);
+    if (!clean || clean.length < 20) {
+      throw new Error(
+        "This PDF looks like scanned images (no selectable text). Please paste the text below, or export it to .docx and re-upload.",
+      );
+    }
+    return clean;
   }
 
   if (name.endsWith(".docx") || (magic === "zip" && name.endsWith(".docx"))) {
