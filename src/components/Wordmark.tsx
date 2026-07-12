@@ -1,13 +1,7 @@
-import blueAsset from "@/assets/wordmark-blue.asset.json";
-import whiteAsset from "@/assets/wordmark-white.asset.json";
-
 /**
- * Areeb Shahid Academy wordmark. Renders the user-provided logo image.
- * Pass `variant="white"` for dark backgrounds (header) or `"blue"` for
- * light backgrounds (home page / menu). Default is `"blue"`.
- *
- * The `className` prop still accepts height utilities like `h-10` — the
- * image scales proportionally.
+ * Transparent text-only Areeb Shahid Academy wordmark.
+ * This intentionally does not render the uploaded JPG background, so the logo
+ * sits cleanly on Persian Blue headers and white pages.
  */
 export function Wordmark({
   className = "",
@@ -16,13 +10,22 @@ export function Wordmark({
   className?: string;
   variant?: "blue" | "white";
 }) {
-  const src = variant === "white" ? whiteAsset.url : blueAsset.url;
+  const colorClass = variant === "white" ? "text-white" : "text-[color:var(--persian-blue)]";
+
   return (
-    <img
-      src={src}
-      alt="Areeb Shahid Academy"
-      className={`w-auto object-contain ${className}`}
-      draggable={false}
-    />
+    <div
+      aria-label="Areeb Shahid Academy"
+      role="img"
+      className={`flex w-auto select-none flex-col items-center justify-center leading-none ${colorClass} ${className}`}
+    >
+      <span className="font-crest text-[1.65em] font-bold uppercase leading-none">
+        Areeb Shahid
+      </span>
+      <span className="mt-[0.16em] flex w-full items-center gap-[0.42em]">
+        <span className="h-[0.12em] flex-1 bg-current" aria-hidden />
+        <span className="font-crest text-[1em] font-semibold uppercase leading-none">Academy</span>
+        <span className="h-[0.12em] flex-1 bg-current" aria-hidden />
+      </span>
+    </div>
   );
 }
