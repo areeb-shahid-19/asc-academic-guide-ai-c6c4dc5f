@@ -201,7 +201,7 @@ function UploadPage() {
 
         <div className="space-y-4 rounded-lg border bg-card p-5">
           <div className="space-y-1.5">
-            <Label htmlFor="file">Upload a file (.docx, .xlsx, .pptx, .txt, .md, .csv)</Label>
+            <Label htmlFor="file">Upload a file (.pdf, .docx, .xlsx, .pptx, .txt, .md, .csv)</Label>
             <label
               htmlFor="file"
               className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed p-4 hover:bg-accent"
@@ -215,7 +215,7 @@ function UploadPage() {
               <input
                 id="file"
                 type="file"
-                accept=".txt,.md,.csv,.docx,.xlsx,.xls,.pptx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                accept=".pdf,.txt,.md,.csv,.docx,.xlsx,.xls,.pptx,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation"
                 className="hidden"
                 onChange={handleFile}
               />
