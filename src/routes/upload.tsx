@@ -29,7 +29,9 @@ async function extractTextFromFile(file: File): Promise<string> {
   const buf = await file.arrayBuffer();
 
   if (name.endsWith(".docx")) {
-    const mammoth = await import("mammoth/mammoth.browser");
+    const mammoth = (await import("mammoth/mammoth.browser" as string)) as {
+      extractRawText: (opts: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }>;
+    };
     const result = await mammoth.extractRawText({ arrayBuffer: buf });
     return result.value;
   }
