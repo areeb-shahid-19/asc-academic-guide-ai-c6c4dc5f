@@ -8,7 +8,7 @@ import { LengthButton, type LengthChoice } from "@/components/LengthButton";
 import { explainAuto } from "@/lib/mesh.functions";
 import { CLASS_KEYS, CURRICULUM, classHasStreams } from "@/lib/curriculum";
 import { Menu, Search } from "lucide-react";
-import wordmarkUrl from "@/assets/wordmark.png";
+import { Wordmark } from "@/components/Wordmark";
 
 export const Route = createFileRoute("/")({
   head: () => ({
