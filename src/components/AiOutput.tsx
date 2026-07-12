@@ -10,12 +10,24 @@ import type { LengthChoice } from "@/components/LengthButton";
 import { followUp } from "@/lib/mesh.functions";
 
 /**
- * Normalize common wrong math delimiters to KaTeX-friendly $ / $$.
+ * Normalize the many wrong math shapes Mesh AI produces into valid KaTeX.
+ * The model frequently:
+ *   - uses `\[ ... \]`, `\( ... \)`, or bare `[ ... ]` / `( ... )` as delimiters
+ *   - emits a raw LaTeX line right next to a text-rendered copy, e.g.
+ *     `n=m+1n=m+1` (so the same tokens appear back-to-back)
+ *   - mixes stray `$...$` inline math inside a larger expression
+ *   - dumps subscripts like `ΔΦBΔΦB` or `dΦBdtdtdΦB`
+ *   - leaves bare `\command` sequences outside any `$...$`
+ * We fix as much as we safely can without corrupting real prose.
  */
 function normalizeMath(input: string): string {
   let s = input;
+
+  // 1. Convert \[..\] and \(..\) delimiters to $$..$$ / $..$
   s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_m, body) => `$$${body}$$`);
   s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_m, body) => `$${body}$`);
+
+  // 2. Bracket-delimited math ( [ ... ] or ( ... ) containing a LaTeX command)
   s = s.replace(
     /(^|[\s>])\[\s*([^\[\]\n]*\\[a-zA-Z]+[^\[\]]*?)\s*\]/g,
     (_m, pre, body) => `${pre}$$${body}$$`,
@@ -24,6 +36,36 @@ function normalizeMath(input: string): string {
     /(^|[\s>])\(\s*([^()\n]*\\[a-zA-Z]+[^()]*?)\s*\)/g,
     (_m, pre, body) => `${pre}$${body}$`,
   );
+
+  // 3. Collapse "X X" duplicates that Mesh emits (raw+rendered pair). This
+  //    covers cases like `n=m+1n=m+1`, `ΔΦBΔΦB`, `35.4335.43`. We match a
+  //    run of 2–40 non-space chars that is repeated immediately.
+  s = s.replace(
+    /([A-Za-z0-9_+\-=.^{}()\\\/·×÷≈≠≤≥Δδϕφμπθλσωαβγη\u0900-\u097F\u0600-\u06FF\u2070-\u209F]{2,40})\1/g,
+    "$1",
+  );
+
+  // 4. Strip stray inline `$...$` fragments that appear INSIDE an already
+  //    unwrapped arithmetic expression on the same line, e.g.
+  //    `= $35 \times 0.7578$ + $37 \times 0.2422$ = 26.52`. Wrap the whole
+  //    right-hand side in one $$...$$ block instead.
+  s = s.replace(/([=:])\s*((?:\$[^$\n]+\$[^\n$]*){2,})/g, (_m, eq, body) => {
+    const cleaned = body.replace(/\$/g, "");
+    return `${eq} $${cleaned.trim()}$`;
+  });
+
+  // 5. Wrap orphan LaTeX commands sitting in plain text: a line that starts
+  //    with (or heavily contains) `\command` but has no `$` around it.
+  s = s.replace(/(^|\n)([^\n$]*\\[a-zA-Z]{2,}[^\n$]*?)(?=\n|$)/g, (m, pre, line) => {
+    // If the line already has $, or looks like normal prose with only a
+    // stray escape, don't touch it.
+    if (line.includes("$")) return m;
+    const cmdCount = (line.match(/\\[a-zA-Z]+/g) || []).length;
+    if (cmdCount === 0) return m;
+    // Whole line is math-heavy — wrap as block math.
+    return `${pre}$$${line.trim()}$$`;
+  });
+
   return s;
 }
 

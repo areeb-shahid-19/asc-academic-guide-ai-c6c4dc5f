@@ -26,7 +26,7 @@ export function Header() {
           <SheetContent side="left" className="w-[320px] sm:w-[380px]">
             <SheetHeader className="items-center text-center">
               <SheetTitle className="sr-only">Areeb Shahid Academy</SheetTitle>
-              <Wordmark className="mx-auto h-14 w-auto text-[color:var(--persian-blue)]" />
+              <Wordmark variant="blue" className="mx-auto h-14" />
             </SheetHeader>
 
             <nav className="mt-6 flex flex-col gap-2">
@@ -98,7 +98,7 @@ export function Header() {
           aria-label="Areeb Shahid Academy — Home"
           className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
         >
-          <Wordmark className="h-10 w-auto sm:h-12 text-white" />
+          <Wordmark variant="white" className="h-10 sm:h-12" />
         </Link>
 
         {/* Right-side spacer to balance the hamburger */}

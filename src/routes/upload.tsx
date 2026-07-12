@@ -58,11 +58,17 @@ async function extractTextFromFile(file: File): Promise<string> {
     );
   }
 
-  // PDFs — not supported in the browser here.
+  // PDF — parse with unpdf (works in the browser, no worker files needed).
   if (magic === "pdf" || name.endsWith(".pdf")) {
-    throw new Error(
-      "PDF parsing isn't supported in the browser yet. Please copy the text from the PDF and paste it below, or export the PDF to .docx and re-upload.",
-    );
+    const { extractText } = await import("unpdf");
+    const { text } = await extractText(new Uint8Array(buf), { mergePages: true });
+    const clean = sanitizeText(Array.isArray(text) ? text.join("\n\n") : text);
+    if (!clean || clean.length < 20) {
+      throw new Error(
+        "This PDF looks like scanned images (no selectable text). Please paste the text below, or export it to .docx and re-upload.",
+      );
+    }
+    return clean;
   }
 
   if (name.endsWith(".docx") || (magic === "zip" && name.endsWith(".docx"))) {
@@ -195,7 +201,7 @@ function UploadPage() {
 
         <div className="space-y-4 rounded-lg border bg-card p-5">
           <div className="space-y-1.5">
-            <Label htmlFor="file">Upload a file (.docx, .xlsx, .pptx, .txt, .md, .csv)</Label>
+            <Label htmlFor="file">Upload a file (.pdf, .docx, .xlsx, .pptx, .txt, .md, .csv)</Label>
             <label
               htmlFor="file"
               className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed p-4 hover:bg-accent"
@@ -209,7 +215,7 @@ function UploadPage() {
               <input
                 id="file"
                 type="file"
-                accept=".txt,.md,.csv,.docx,.xlsx,.xls,.pptx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                accept=".pdf,.txt,.md,.csv,.docx,.xlsx,.xls,.pptx,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.presentationml.presentation"
                 className="hidden"
                 onChange={handleFile}
               />
