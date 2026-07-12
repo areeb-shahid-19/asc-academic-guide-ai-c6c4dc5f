@@ -24,16 +24,53 @@ export const Route = createFileRoute("/upload")({
   component: UploadPage,
 });
 
+/** Strip binary/control garbage that appears when a non-text file (e.g. PDF, .doc, image) is read as plain text. */
+function sanitizeText(raw: string): string {
+  return raw
+    // remove NULs and most C0 control chars except tab/newline/CR
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, " ")
+    // collapse long runs of non-word gibberish (###, $$$, ***, etc.)
+    .replace(/([#$&_\-*=~|`^]){4,}/g, " ")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/** Detect the file's real type from its magic bytes, regardless of extension. */
+function sniffMagic(buf: ArrayBuffer): "pdf" | "zip" | "ole" | "unknown" {
+  const b = new Uint8Array(buf.slice(0, 8));
+  if (b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46) return "pdf"; // %PDF
+  if (b[0] === 0x50 && b[1] === 0x4b && b[2] === 0x03 && b[3] === 0x04) return "zip"; // PK.. (docx/xlsx/pptx)
+  if (b[0] === 0xd0 && b[1] === 0xcf && b[2] === 0x11 && b[3] === 0xe0) return "ole"; // legacy .doc/.xls/.ppt
+  return "unknown";
+}
+
 async function extractTextFromFile(file: File): Promise<string> {
   const name = file.name.toLowerCase();
   const buf = await file.arrayBuffer();
+  const magic = sniffMagic(buf);
 
-  if (name.endsWith(".docx")) {
+  // Legacy binary Office (.doc / .xls / .ppt) — we can't parse OLE reliably in the browser.
+  if (magic === "ole") {
+    throw new Error(
+      "This looks like an old Microsoft Office file (.doc / .xls / .ppt). Please re-save it as .docx / .xlsx / .pptx and upload again — or paste the text below.",
+    );
+  }
+
+  // PDFs — not supported in the browser here.
+  if (magic === "pdf" || name.endsWith(".pdf")) {
+    throw new Error(
+      "PDF parsing isn't supported in the browser yet. Please copy the text from the PDF and paste it below, or export the PDF to .docx and re-upload.",
+    );
+  }
+
+  if (name.endsWith(".docx") || (magic === "zip" && name.endsWith(".docx"))) {
     const mammoth = (await import("mammoth/mammoth.browser" as string)) as {
       extractRawText: (opts: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }>;
     };
     const result = await mammoth.extractRawText({ arrayBuffer: buf });
-    return result.value;
+    return sanitizeText(result.value);
   }
   if (name.endsWith(".xlsx") || name.endsWith(".xls") || name.endsWith(".csv")) {
     const XLSX = await import("xlsx");
@@ -44,7 +81,7 @@ async function extractTextFromFile(file: File): Promise<string> {
       parts.push(XLSX.utils.sheet_to_csv(wb.Sheets[sheetName]));
       parts.push("\n");
     }
-    return parts.join("\n");
+    return sanitizeText(parts.join("\n"));
   }
   if (name.endsWith(".pptx")) {
     const JSZip = (await import("jszip")).default;
@@ -58,15 +95,33 @@ async function extractTextFromFile(file: File): Promise<string> {
       const text = xml
         .replace(/<a:br\s*\/>/g, "\n")
         .replace(/<[^>]+>/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&apos;/g, "'")
         .replace(/\s+/g, " ")
         .trim();
       if (text) chunks.push(`## ${s.split("/").pop()}\n${text}`);
     }
-    return chunks.join("\n\n");
+    const joined = chunks.join("\n\n");
+    if (sanitizeText(joined).length < 30) {
+      throw new Error(
+        "This PowerPoint seems to contain mostly images (no readable text on slides). Please describe the topic in the box below, or paste any speaker notes.",
+      );
+    }
+    return sanitizeText(joined);
+  }
+  // Any remaining zip we don't handle
+  if (magic === "zip") {
+    throw new Error(
+      "This looks like a zipped Office file we don't recognise. Please upload a .docx / .xlsx / .pptx directly, or paste the content below.",
+    );
   }
   // Fallback: plain text (.txt, .md, etc.)
-  return await file.text();
+  return sanitizeText(await file.text());
 }
+
 
 function UploadPage() {
   const run = useServerFn(explainFromDocument);
