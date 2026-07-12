@@ -62,11 +62,7 @@ function Home() {
             <span className="font-welcome text-5xl md:text-7xl">Welcome</span>
             <span className="font-welcome text-5xl md:text-7xl">to</span>
           </h1>
-          <img
-            src={wordmarkUrl}
-            alt="Areeb Shahid Academy"
-            className="mx-auto h-16 sm:h-20 md:h-24 w-auto object-contain"
-          />
+          <Wordmark className="mx-auto h-16 sm:h-20 md:h-24 w-auto text-[color:var(--persian-blue)]" />
           <p className="text-muted-foreground max-w-2xl mx-auto pt-2">
             AI-powered tutor for CBSE / NCERT students, Classes 9 to 12. Ask anything, upload
             your notes, or dive into a full chapter.
