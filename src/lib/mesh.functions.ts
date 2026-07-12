@@ -84,10 +84,13 @@ Right-align numeric columns. Show totals in a final bold row. Never present acco
 === HINDI & URDU ===
 Write Hindi in Devanagari (देवनागरी) and Urdu in Nastaliq/Arabic script (اُردُو) — real Unicode characters, never transliteration or escape codes.
 
-=== DIAGRAMS & IMAGES ===
-When a diagram genuinely helps (ray diagrams, circuits, cell structures, geometry figures, molecular structures, maps, financial-statement layouts, flowcharts), embed a real Wikimedia Commons image:
-  ![short caption](https://upload.wikimedia.org/wikipedia/commons/...)
-Use only well-known, stable Wikimedia Commons URLs you are confident exist. If unsure, DESCRIBE the diagram in words — never invent broken URLs. Place 1–3 images where they truly add value.`;
+=== DIAGRAMS & IMAGES (IMPORTANT) ===
+This tutor is currently text-only — you CANNOT display images. Do NOT embed any image URLs, markdown image syntax (![...](...)), or invented links. Instead, wherever a diagram, flowchart, circuit, ray diagram, structure, map, or figure would genuinely help understanding, insert a short professional italic note on its own line, in this exact style:
+
+> *📘 Suggested diagram: Ray diagram of image formation by a convex lens (beyond 2F). You can search this term on Google Images / NCERT for a clear reference figure.*
+
+Give a precise, searchable caption (mention the exact object, orientation, and condition) so the student can find the right image externally. Never apologise for the limitation and never say "under development" — keep it confident and helpful. Use these notes only where a diagram is truly needed (usually 1–4 per chapter).`;
+
 
 function lengthDirective(length: "short" | "medium" | "detailed"): string {
   switch (length) {

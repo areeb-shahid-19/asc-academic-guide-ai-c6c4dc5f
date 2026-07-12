@@ -8,8 +8,7 @@ import {
   SheetTitle,
   SheetClose,
 } from "@/components/ui/sheet";
-import logoUrl from "@/assets/logo.png";
-import wordmarkUrl from "@/assets/wordmark.png";
+import { Wordmark } from "@/components/Wordmark";
 
 export function Header() {
   return (
@@ -27,11 +26,7 @@ export function Header() {
           <SheetContent side="left" className="w-[320px] sm:w-[380px]">
             <SheetHeader className="items-center text-center">
               <SheetTitle className="sr-only">Areeb Shahid Academy</SheetTitle>
-              <img
-                src={wordmarkUrl}
-                alt="Areeb Shahid Academy"
-                className="mx-auto h-12 w-auto object-contain"
-              />
+              <Wordmark className="mx-auto h-14 w-auto text-[color:var(--persian-blue)]" />
             </SheetHeader>
 
             <nav className="mt-6 flex flex-col gap-2">
@@ -103,13 +98,7 @@ export function Header() {
           aria-label="Areeb Shahid Academy — Home"
           className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
         >
-          <img
-            src={logoUrl}
-            alt="Areeb Shahid Academy logo"
-            width={1024}
-            height={1024}
-            className="h-14 w-auto sm:h-16 md:h-20 object-contain drop-shadow-sm"
-          />
+          <Wordmark className="h-10 w-auto sm:h-12 text-white" />
         </Link>
 
         {/* Right-side spacer to balance the hamburger */}

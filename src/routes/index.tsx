@@ -8,7 +8,7 @@ import { LengthButton, type LengthChoice } from "@/components/LengthButton";
 import { explainAuto } from "@/lib/mesh.functions";
 import { CLASS_KEYS, CURRICULUM, classHasStreams } from "@/lib/curriculum";
 import { Menu, Search } from "lucide-react";
-import wordmarkUrl from "@/assets/wordmark.png";
+import { Wordmark } from "@/components/Wordmark";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,11 +62,7 @@ function Home() {
             <span className="font-welcome text-5xl md:text-7xl">Welcome</span>
             <span className="font-welcome text-5xl md:text-7xl">to</span>
           </h1>
-          <img
-            src={wordmarkUrl}
-            alt="Areeb Shahid Academy"
-            className="mx-auto h-16 sm:h-20 md:h-24 w-auto object-contain"
-          />
+          <Wordmark className="mx-auto h-16 sm:h-20 md:h-24 w-auto text-[color:var(--persian-blue)]" />
           <p className="text-muted-foreground max-w-2xl mx-auto pt-2">
             AI-powered tutor for CBSE / NCERT students, Classes 9 to 12. Ask anything, upload
             your notes, or dive into a full chapter.
