@@ -9,61 +9,136 @@ import { Input } from "@/components/ui/input";
 import type { LengthChoice } from "@/components/LengthButton";
 import { followUp } from "@/lib/mesh.functions";
 
+const greekToLatex: Record<string, string> = {
+  Δ: "\\Delta",
+  δ: "\\delta",
+  Φ: "\\Phi",
+  φ: "\\phi",
+  μ: "\\mu",
+  λ: "\\lambda",
+  θ: "\\theta",
+  π: "\\pi",
+  Ω: "\\Omega",
+  ω: "\\omega",
+  α: "\\alpha",
+  β: "\\beta",
+  γ: "\\gamma",
+};
+
+function cleanMathExpression(input: string): string {
+  let body = input
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")
+    .replace(/\uFEFF/g, "")
+    .replace(/\$+/g, "")
+    .replace(/`+/g, "")
+    .replace(/\\,/g, " ")
+    .trim();
+
+  body = body
+    .replace(/∆/g, "Δ")
+    .replace(/3\s*λ\s*2\s*2\s*3\s*λ\s*/g, "\\frac{3\\lambda}{2}")
+    .replace(/Δ\s*Φ\s*B/g, "\\Delta \\Phi_B")
+    .replace(/Φ\s*B/g, "\\Phi_B")
+    .replace(/d\s*Φ\s*B\s*d\s*t\s*d\s*t\s*d\s*Φ\s*B/gi, "\\frac{d\\Phi_B}{dt}")
+    .replace(/d\s*Φ\s*B\s*d\s*t/gi, "\\frac{d\\Phi_B}{dt}")
+    .replace(/d\s*t\s*d\s*Φ\s*B/gi, "\\frac{d\\Phi_B}{dt}")
+    .replace(/\bE\s*E\b/g, "E")
+    .replace(/\baa\b/g, "a")
+    .replace(/([λμθΔΦπΩωαβγδφ])\1+/g, "$1")
+    .replace(/([A-Za-z0-9_+\-=.^{}()\\\/·×÷≈≠≤≥Δδϕφμπθλσωαβγη]{2,40})\1/g, "$1");
+
+  body = body.replace(/[ΔδΦφμλθπΩωαβγ]/g, (char) => greekToLatex[char] ?? char);
+  body = body
+    .replace(/\\Phi\s*B\b/g, "\\Phi_B")
+    .replace(/\\cos\s*\(([^)]+)\)/g, "\\cos $1")
+    .replace(/\\sin\s*\(([^)]+)\)/g, "\\sin $1")
+    .replace(/=\s*(n\s*-\s*\\frac\{1\}\{2\})\s*\\lambda/g, "= ($1)\\lambda")
+    .replace(/=\s*(n\s*\+\s*\\frac\{1\}\{2\})\s*\\lambda/g, "= ($1)\\lambda")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return body;
+}
+
+function isMathOnlyLine(line: string): boolean {
+  const raw = line.trim();
+  if (!raw || raw === "$" || raw === "$$" || raw.startsWith("|") || raw.startsWith("#")) {
+    return false;
+  }
+
+  const body = raw.replace(/^([-*+]\s+|\d+[.)]\s+)/, "");
+  const withoutCommands = body
+    .replace(/\\text\{[^}]*\}/g, "")
+    .replace(/\\[a-zA-Z]+/g, "")
+    .replace(/\{[^}]*\}/g, "");
+  const hasLongProse = /[A-Za-z]{4,}/.test(withoutCommands);
+  const hasMathSignal = /(?:\$|\\[a-zA-Z]+|[=+\-×÷≈≠≤≥^_]|[ΔδΦφμλθπΩωαβγ]|\b(?:sin|cos|tan|log|lim)\b)/.test(body);
+  const startsAsFormula = /^[\$\\A-Za-z0-9_{}^+\-()[\]ΔδΦφμλθπΩωαβγ]+\s*(?:=|≈|≤|≥|<|>)/.test(body);
+
+  return hasMathSignal && !hasLongProse && (startsAsFormula || body.includes("=") || body.startsWith("$") || body.includes("\\frac"));
+}
+
+function normalizeMathLine(line: string): string {
+  const trimmed = line.trim();
+  if (trimmed === "$" || trimmed === "$$") return "";
+
+  const prefixMatch = line.match(/^(\s*(?:[-*+]\s+|\d+[.)]\s+)?)/);
+  const prefix = prefixMatch?.[0] ?? "";
+  const body = line.slice(prefix.length);
+
+  if (!isMathOnlyLine(body)) return line;
+
+  const cleaned = cleanMathExpression(body);
+  if (!cleaned) return "";
+  return `${prefix}$$${cleaned}$$`;
+}
+
 /**
- * Normalize the many wrong math shapes Mesh AI produces into valid KaTeX.
- * The model frequently:
- *   - uses `\[ ... \]`, `\( ... \)`, or bare `[ ... ]` / `( ... )` as delimiters
- *   - emits a raw LaTeX line right next to a text-rendered copy, e.g.
- *     `n=m+1n=m+1` (so the same tokens appear back-to-back)
- *   - mixes stray `$...$` inline math inside a larger expression
- *   - dumps subscripts like `ΔΦBΔΦB` or `dΦBdtdtdΦB`
- *   - leaves bare `\command` sequences outside any `$...$`
- * We fix as much as we safely can without corrupting real prose.
+ * Normalize the wrong math shapes Mesh AI sometimes produces into valid KaTeX.
+ * This turns mixed fragments like `\Delta = $n - \frac{1}{2}$\lambda` into
+ * display math and collapses repeated raw/rendered duplicates like `λλ`.
  */
 function normalizeMath(input: string): string {
-  let s = input;
+  let s = input
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "")
+    .replace(/\uFEFF/g, "")
+    .replace(/^(```|~~~).*$/gm, "")
+    .replace(/^(#{1,6})(\S)/gm, "$1 $2")
+    .replace(/\${3,}/g, "$$")
+    .replace(/%+\s*\$\$/g, "$$")
+    .replace(/3\s*λ\s*2\s*2\s*3\s*λ\s*/g, "$\\frac{3\\lambda}{2}$")
+    .replace(/([λμθΔΦπΩωαβγδφ])\1+/g, "$1")
+    .replace(/\baa\b/g, "a");
 
-  // 1. Convert \[..\] and \(..\) delimiters to $$..$$ / $..$
-  s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_m, body) => `$$${body}$$`);
-  s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_m, body) => `$${body}$`);
-
-  // 2. Bracket-delimited math ( [ ... ] or ( ... ) containing a LaTeX command)
+  s = s.replace(/\\\[([\s\S]+?)\\\]/g, (_m, body) => `$$${cleanMathExpression(body)}$$`);
+  s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_m, body) => `$${cleanMathExpression(body)}$`);
   s = s.replace(
     /(^|[\s>])\[\s*([^\[\]\n]*\\[a-zA-Z]+[^\[\]]*?)\s*\]/g,
-    (_m, pre, body) => `${pre}$$${body}$$`,
-  );
-  s = s.replace(
-    /(^|[\s>])\(\s*([^()\n]*\\[a-zA-Z]+[^()]*?)\s*\)/g,
-    (_m, pre, body) => `${pre}$${body}$`,
+    (_m, pre, body) => `${pre}$$${cleanMathExpression(body)}$$`,
   );
 
-  // 3. Collapse "X X" duplicates that Mesh emits (raw+rendered pair). This
-  //    covers cases like `n=m+1n=m+1`, `ΔΦBΔΦB`, `35.4335.43`. We match a
-  //    run of 2–40 non-space chars that is repeated immediately.
   s = s.replace(
     /([A-Za-z0-9_+\-=.^{}()\\\/·×÷≈≠≤≥Δδϕφμπθλσωαβγη\u0900-\u097F\u0600-\u06FF\u2070-\u209F]{2,40})\1/g,
     "$1",
   );
 
-  // 4. Strip stray inline `$...$` fragments that appear INSIDE an already
-  //    unwrapped arithmetic expression on the same line, e.g.
-  //    `= $35 \times 0.7578$ + $37 \times 0.2422$ = 26.52`. Wrap the whole
-  //    right-hand side in one $$...$$ block instead.
   s = s.replace(/([=:])\s*((?:\$[^$\n]+\$[^\n$]*){2,})/g, (_m, eq, body) => {
-    const cleaned = body.replace(/\$/g, "");
-    return `${eq} $${cleaned.trim()}$`;
+    const cleaned = cleanMathExpression(body);
+    return `${eq} $${cleaned}$`;
   });
 
-  // 5. Wrap orphan LaTeX commands sitting in plain text: a line that starts
-  //    with (or heavily contains) `\command` but has no `$` around it.
+  s = s
+    .split("\n")
+    .map(normalizeMathLine)
+    .filter((line, index, lines) => !(line === "" && lines[index - 1] === ""))
+    .join("\n");
+
   s = s.replace(/(^|\n)([^\n$]*\\[a-zA-Z]{2,}[^\n$]*?)(?=\n|$)/g, (m, pre, line) => {
-    // If the line already has $, or looks like normal prose with only a
-    // stray escape, don't touch it.
-    if (line.includes("$")) return m;
     const cmdCount = (line.match(/\\[a-zA-Z]+/g) || []).length;
-    if (cmdCount === 0) return m;
-    // Whole line is math-heavy — wrap as block math.
-    return `${pre}$$${line.trim()}$$`;
+    if (line.includes("$") || cmdCount === 0 || /[A-Za-z]{4,}/.test(line.replace(/\\[a-zA-Z]+/g, ""))) {
+      return m;
+    }
+    return `${pre}$$${cleanMathExpression(line)}$$`;
   });
 
   return s;
@@ -77,7 +152,6 @@ function Markdown({ text }: { text: string }) {
       components={{
         img: ({ node: _node, alt, src, ...props }) => (
           <figure className="my-6 flex flex-col items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               {...props}
               src={src}
@@ -86,16 +160,11 @@ function Markdown({ text }: { text: string }) {
               className="max-h-96 w-auto rounded-lg border object-contain shadow-sm"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
-                const cap = (e.currentTarget as HTMLImageElement)
-                  .nextElementSibling as HTMLElement | null;
+                const cap = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
                 if (cap) cap.style.display = "none";
               }}
             />
-            {alt ? (
-              <figcaption className="mt-2 text-center text-xs text-muted-foreground">
-                {alt}
-              </figcaption>
-            ) : null}
+            {alt ? <figcaption className="mt-2 text-center text-xs text-muted-foreground">{alt}</figcaption> : null}
           </figure>
         ),
         table: ({ node: _node, ...props }) => (
@@ -110,13 +179,7 @@ function Markdown({ text }: { text: string }) {
   );
 }
 
-function FollowUpBox({
-  previousAnswer,
-  length,
-}: {
-  previousAnswer: string;
-  length: LengthChoice;
-}) {
+function FollowUpBox({ previousAnswer, length }: { previousAnswer: string; length: LengthChoice }) {
   const run = useServerFn(followUp);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -142,7 +205,7 @@ function FollowUpBox({
   }
 
   return (
-    <div className="rounded-lg border bg-card p-5 space-y-4">
+    <div className="space-y-4 rounded-lg border bg-card p-5">
       <div className="flex items-center gap-2 text-sm font-medium text-[color:var(--persian-blue)]">
         <MessageCirclePlus className="h-4 w-4" />
         Ask a follow-up about this answer
@@ -183,7 +246,6 @@ function FollowUpBox({
           <article className="prose prose-slate max-w-none dark:prose-invert prose-headings:text-[color:var(--persian-blue)] prose-strong:text-[color:var(--persian-blue)]">
             <Markdown text={answer} />
           </article>
-          {/* Recursive follow-up: after this answer, allow another follow-up. */}
           <FollowUpBox previousAnswer={answer} length={length} />
         </div>
       )}
@@ -223,14 +285,12 @@ export function AiOutput({
   }
   if (!text) {
     return emptyHint ? (
-      <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-        {emptyHint}
-      </div>
+      <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">{emptyHint}</div>
     ) : null;
   }
   return (
     <div className="space-y-4">
-      <article className="prose prose-slate max-w-none rounded-lg border bg-card p-6 dark:prose-invert prose-headings:text-[color:var(--persian-blue)] prose-strong:text-[color:var(--persian-blue)] prose-img:mx-auto prose-img:rounded-lg prose-img:border prose-img:shadow-sm prose-img:my-6 prose-img:max-h-96 prose-img:object-contain">
+      <article className="prose prose-slate max-w-none rounded-lg border bg-card p-6 dark:prose-invert prose-headings:text-[color:var(--persian-blue)] prose-strong:text-[color:var(--persian-blue)] prose-img:mx-auto prose-img:my-6 prose-img:max-h-96 prose-img:rounded-lg prose-img:border prose-img:object-contain prose-img:shadow-sm">
         <Markdown text={text} />
       </article>
       {showFollowUp && <FollowUpBox previousAnswer={text} length={length} />}
