@@ -40,6 +40,7 @@ function ChapterPage() {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [lastLength, setLastLength] = useState<LengthChoice>("detailed");
 
   const ready = picker.classKey && picker.subject && picker.chapter;
 
@@ -50,6 +51,7 @@ function ChapterPage() {
       setError("Please select class, subject and chapter first.");
       return;
     }
+    setLastLength(length);
     setLoading(true);
     try {
       const res = await run({ data: { ...picker, length } });
@@ -96,6 +98,7 @@ function ChapterPage() {
           loading={loading}
           error={error}
           text={text}
+          length={lastLength}
           emptyHint="Your complete chapter guide will appear here."
         />
       </main>

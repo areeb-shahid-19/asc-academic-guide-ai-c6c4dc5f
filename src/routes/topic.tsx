@@ -115,3 +115,25 @@ function TopicPage() {
     </div>
   );
 }
+
+function examplePlaceholder(subject: string, chapter: string): string {
+  if (!subject) return "e.g. Explain the topic in simple words with an example";
+  const s = subject.toLowerCase();
+  if (s.includes("account"))
+    return `e.g. Explain the journal entries for ${chapter || "this chapter"} with a worked example in table form`;
+  if (s.includes("business")) return `e.g. Explain the key principles in ${chapter || "this chapter"} with real-world examples`;
+  if (s.includes("econom")) return `e.g. Explain ${chapter || "this concept"} with graphs and a numerical example`;
+  if (s.includes("math")) return `e.g. Explain the theorem in ${chapter || "this chapter"} with a full proof and 2 solved examples`;
+  if (s.includes("phys")) return `e.g. Derive the main formula in ${chapter || "this chapter"} and solve one numerical`;
+  if (s.includes("chem")) return `e.g. Explain the mechanism/reactions in ${chapter || "this chapter"} with diagrams`;
+  if (s.includes("bio")) return `e.g. Explain the process in ${chapter || "this chapter"} with a labelled diagram`;
+  if (s.includes("history")) return `e.g. Explain the causes and consequences discussed in ${chapter || "this chapter"}`;
+  if (s.includes("polit")) return `e.g. Explain the concepts in ${chapter || "this chapter"} with examples`;
+  if (s.includes("geo")) return `e.g. Explain ${chapter || "this topic"} with a diagram/map`;
+  if (s.includes("english")) return `e.g. Give a summary, themes and character analysis for ${chapter || "this chapter"}`;
+  if (s.includes("hindi")) return `e.g. ${chapter || "इस पाठ"} का सारांश और मुख्य प्रश्न-उत्तर समझाइए`;
+  if (s.includes("urdu")) return `e.g. ${chapter || "اس سبق"} کا خلاصہ اور اہم سوال جواب سمجھائیے`;
+  if (s.includes("comput")) return `e.g. Explain ${chapter || "this topic"} with example code and expected output`;
+  if (s.includes("entrepren")) return `e.g. Explain ${chapter || "this chapter"} with a real Indian startup example`;
+  return `e.g. Explain the main ideas of ${chapter || "this chapter"} with examples`;
+}
