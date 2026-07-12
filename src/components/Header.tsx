@@ -8,8 +8,7 @@ import {
   SheetTitle,
   SheetClose,
 } from "@/components/ui/sheet";
-import logoUrl from "@/assets/logo.png";
-import wordmarkUrl from "@/assets/wordmark.png";
+import { Wordmark } from "@/components/Wordmark";
 
 export function Header() {
   return (
