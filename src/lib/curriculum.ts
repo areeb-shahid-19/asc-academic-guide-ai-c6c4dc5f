@@ -867,6 +867,8 @@ export const CURRICULUM: Record<string, ClassData> = {
           "If I Were You",
         ],
       },
+      HINDI_9,
+      URDU_9,
       AI_9,
       IT_9,
       CAPP_9,
@@ -953,6 +955,8 @@ export const CURRICULUM: Record<string, ClassData> = {
           "The Proposal",
         ],
       },
+      HINDI_10,
+      URDU_10,
       AI_10,
       IT_10,
       CAPP_10,
@@ -962,7 +966,7 @@ export const CURRICULUM: Record<string, ClassData> = {
     label: "Class 11",
     streams: {
       Science: [PHYSICS_11, CHEM_11, BIO_11, MATH_11, CS_11, ENGLISH_11, PHE_11],
-      Commerce: [ACCOUNTS_11, BST_11, ECO_11, MATH_11, CS_11, ENGLISH_11, PHE_11],
+      Commerce: [ACCOUNTS_11, BST_11, ECO_11, ENTREP_11, MATH_11, CS_11, ENGLISH_11, PHE_11],
       Arts: [
         HISTORY_11,
         POLSCI_11,
@@ -980,7 +984,7 @@ export const CURRICULUM: Record<string, ClassData> = {
     label: "Class 12",
     streams: {
       Science: [PHYSICS_12, CHEM_12, BIO_12, MATH_12, CS_12, ENGLISH_12, PHE_12],
-      Commerce: [ACCOUNTS_12, BST_12, ECO_12, MATH_12, CS_12, ENGLISH_12, PHE_12],
+      Commerce: [ACCOUNTS_12, BST_12, ECO_12, ENTREP_12, MATH_12, CS_12, ENGLISH_12, PHE_12],
       Arts: [
         HISTORY_12,
         POLSCI_12,
