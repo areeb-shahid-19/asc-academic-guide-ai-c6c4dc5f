@@ -113,6 +113,7 @@ function TopicPage() {
           emptyHint="Pick a chapter and ask a question to see your explanation here."
         />
       </main>
+      <Footer />
     </div>
   );
 }
