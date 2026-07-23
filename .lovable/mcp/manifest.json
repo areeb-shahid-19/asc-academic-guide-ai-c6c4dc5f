@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "areeb-shahid-academy",
+      "version": "0.1.0",
+      "title": "Areeb Shahid Academy"
+    },
+    "tools": [
+      {
+        "name": "explain_auto",
+        "title": "Auto-detect class and explain",
+        "description": "Answer a CBSE/NCERT student question without knowing their class or subject in advance. The tutor infers the most likely class/subject and gives a level-appropriate explanation.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 3,
+              "description": "The student's question or topic in natural language."
+            },
+            "length": {
+              "default": "medium",
+              "description": "Response depth: 'short', 'medium', or 'detailed'.",
+              "type": "string",
+              "enum": [
+                "short",
+                "medium",
+                "detailed"
+              ]
+            }
+          },
+          "required": [
+            "prompt"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "explain_topic",
+        "title": "Explain a CBSE/NCERT topic",
+        "description": "Get an exam-ready explanation of a specific topic or question for a CBSE/NCERT student (classes 9-12). Select class, subject, chapter, and ask a question.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "classKey": {
+              "type": "string",
+              "description": "Class level: '9', '10', '11', or '12'."
+            },
+            "stream": {
+              "description": "Stream for class 11/12: 'Science', 'Commerce', or 'Arts'. Leave empty for class 9/10.",
+              "type": "string"
+            },
+            "subject": {
+              "type": "string",
+              "description": "Subject name, e.g. 'Mathematics', 'Physics', 'Accountancy'."
+            },
+            "chapter": {
+              "type": "string",
+              "description": "Chapter or topic name from the NCERT syllabus."
+            },
+            "prompt": {
+              "type": "string",
+              "minLength": 3,
+              "description": "The student's specific question or what they want explained."
+            },
+            "length": {
+              "default": "medium",
+              "description": "Response depth: 'short' (~250 words), 'medium' (~600 words), 'detailed' (1500-2500+ words, exam-ready).",
+              "type": "string",
+              "enum": [
+                "short",
+                "medium",
+                "detailed"
+              ]
+            }
+          },
+          "required": [
+            "classKey",
+            "subject",
+            "chapter",
+            "prompt"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "explain_chapter",
+        "title": "Explain a full NCERT chapter",
+        "description": "Generate a complete NCERT-aligned study guide for a full chapter: concepts, formulas, derivations, worked examples, NCERT exercise solutions, and revision notes.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "classKey": {
+              "type": "string",
+              "description": "Class level: '9', '10', '11', or '12'."
+            },
+            "stream": {
+              "description": "Stream for class 11/12: 'Science', 'Commerce', or 'Arts'. Leave empty for class 9/10.",
+              "type": "string"
+            },
+            "subject": {
+              "type": "string",
+              "description": "Subject name."
+            },
+            "chapter": {
+              "type": "string",
+              "description": "Chapter name from the NCERT syllabus."
+            },
+            "length": {
+              "default": "detailed",
+              "description": "Response depth. 'detailed' produces a full textbook-style chapter (1500-2500+ words).",
+              "type": "string",
+              "enum": [
+                "short",
+                "medium",
+                "detailed"
+              ]
+            }
+          },
+          "required": [
+            "classKey",
+            "subject",
+            "chapter"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "explain_from_document",
+        "title": "Explain uploaded study material",
+        "description": "Given the plain-text content of a student's academic material (extracted from a PDF, DOCX, PPTX, XLSX, or pasted notes), produce a clear, textbook-style explanation. Optionally answer a specific question about the material.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 20,
+              "description": "The extracted plain-text content of the student's uploaded material (up to ~80k chars)."
+            },
+            "question": {
+              "description": "Optional specific question about the material.",
+              "type": "string"
+            },
+            "length": {
+              "default": "medium",
+              "description": "Response depth: 'short', 'medium', or 'detailed'.",
+              "type": "string",
+              "enum": [
+                "short",
+                "medium",
+                "detailed"
+              ]
+            }
+          },
+          "required": [
+            "content"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
