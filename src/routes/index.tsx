@@ -52,7 +52,7 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
       <main className="mx-auto max-w-5xl px-4 py-10 md:py-14 space-y-10">
