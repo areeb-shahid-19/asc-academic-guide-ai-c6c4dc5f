@@ -103,6 +103,7 @@ function ChapterPage() {
           emptyHint="Your complete chapter guide will appear here."
         />
       </main>
+      <Footer />
     </div>
   );
 }
