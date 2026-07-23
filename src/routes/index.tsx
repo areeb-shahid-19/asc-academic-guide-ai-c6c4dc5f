@@ -55,7 +55,7 @@ function Home() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
-      <main className="mx-auto max-w-5xl px-4 py-10 md:py-14 space-y-10">
+      <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-10 md:py-14 space-y-10">
         {/* Welcome */}
         <section className="text-center space-y-2">
           <h1 className="leading-tight flex flex-wrap items-baseline justify-center gap-x-3 md:gap-x-4 text-black">
