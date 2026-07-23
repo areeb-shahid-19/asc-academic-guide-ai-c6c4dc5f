@@ -72,9 +72,9 @@ function ChapterPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="mx-auto max-w-4xl px-4 py-8 space-y-6">
+      <main className="flex-1 mx-auto w-full max-w-4xl px-4 py-8 space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-[color:var(--persian-blue)]">
             Full chapter explanation
