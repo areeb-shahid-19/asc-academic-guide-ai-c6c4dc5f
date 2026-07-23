@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { AiOutput } from "@/components/AiOutput";
 import { LengthButton, type LengthChoice } from "@/components/LengthButton";
@@ -52,10 +53,10 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
-      <main className="mx-auto max-w-5xl px-4 py-10 md:py-14 space-y-10">
+      <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-10 md:py-14 space-y-10">
         {/* Welcome */}
         <section className="text-center space-y-2">
           <h1 className="leading-tight flex flex-wrap items-baseline justify-center gap-x-3 md:gap-x-4 text-black">
@@ -115,9 +116,7 @@ function Home() {
         </section>
       </main>
 
-      <footer className="mt-12 border-t bg-[color:var(--persian-blue)] py-4 text-center text-sm text-white/80">
-        © {new Date().getFullYear()} Areeb Shahid Academy
-      </footer>
+      <Footer />
     </div>
   );
 }
