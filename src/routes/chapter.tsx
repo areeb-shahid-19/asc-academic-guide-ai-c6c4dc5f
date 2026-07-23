@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { AiOutput } from "@/components/AiOutput";
 import { CurriculumPicker, type PickerValue } from "@/components/CurriculumPicker";
 import { LengthButton, type LengthChoice } from "@/components/LengthButton";
