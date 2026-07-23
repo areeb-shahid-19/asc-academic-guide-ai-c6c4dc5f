@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { AiOutput } from "@/components/AiOutput";
 import { LengthButton, type LengthChoice } from "@/components/LengthButton";
