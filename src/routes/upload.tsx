@@ -260,6 +260,7 @@ function UploadPage() {
           emptyHint="Your personalized explanation will appear here."
         />
       </main>
+      <Footer />
     </div>
   );
 }
